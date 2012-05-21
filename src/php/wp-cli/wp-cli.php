@@ -1,7 +1,7 @@
 <?php
 
 if ( PHP_SAPI !== 'cli' ) {
-	die( 'Only cli access' );
+    die( 'Only cli access' );
 }
 
 define( 'WP_CLI_VERSION', '0.6.0-dev' );
@@ -32,49 +32,49 @@ define( 'WP_CLI_SILENT', isset( $assoc_args['silent'] ) );
 
 // Handle --version parameter
 if ( isset( $assoc_args['version'] ) && empty( $arguments ) ) {
-	WP_CLI::line( 'wp-cli ' . WP_CLI_VERSION );
-	exit;
+    WP_CLI::line( 'wp-cli ' . WP_CLI_VERSION );
+    exit;
 }
 
 // Handle --help parameter
 if ( isset( $assoc_args['help'] ) ) {
-	array_unshift( $arguments, 'help' );
-	unset( $assoc_args['help'] );
+    array_unshift( $arguments, 'help' );
+    unset( $assoc_args['help'] );
 }
 
 // Define the WordPress location
 if ( !empty( $assoc_args['path'] ) ) {
-	// trailingslashit() isn't available yet
-	define( 'WP_ROOT', rtrim( $assoc_args['path'], '/' ) . '/' );
+    // trailingslashit() isn't available yet
+    define( 'WP_ROOT', rtrim( $assoc_args['path'], '/' ) . '/' );
 } elseif ( is_readable( $_SERVER['PWD'] . '/../wp-load.php' ) ) {
-	define( 'WP_ROOT', $_SERVER['PWD'] . '/../' );
+    define( 'WP_ROOT', $_SERVER['PWD'] . '/../' );
 } else {
-	define( 'WP_ROOT', $_SERVER['PWD'] . '/' );
+    define( 'WP_ROOT', $_SERVER['PWD'] . '/' );
 }
 
 if ( array( 'core', 'download' ) == $arguments ) {
-	WP_CLI::run_command( $arguments, $assoc_args );
-	exit;
+    WP_CLI::run_command( $arguments, $assoc_args );
+    exit;
 }
 
 if ( !is_readable( WP_ROOT . 'wp-load.php' ) ) {
-	WP_CLI::error( 'This does not seem to be a WordPress install. Pass --path=`path/to/wordpress` or run `wp core download`.' );
+    WP_CLI::error( 'This does not seem to be a WordPress install. Pass --path=`path/to/wordpress` or run `wp core download`.' );
 }
 
 if ( array( 'core', 'config' ) == $arguments ) {
-	WP_CLI::run_command( $arguments, $assoc_args );
-	exit;
+    WP_CLI::run_command( $arguments, $assoc_args );
+    exit;
 }
 
 if ( array( 'db', 'create' ) == $arguments ) {
-	WP_CLI::load_wp_config();
-	WP_CLI::run_command( $arguments, $assoc_args );
-	exit;
+    WP_CLI::load_wp_config();
+    WP_CLI::run_command( $arguments, $assoc_args );
+    exit;
 }
 
 // Set installer flag before loading any WP files
 if ( array( 'core', 'install' ) == $arguments ) {
-	WP_CLI::check_required_args( array( 'url', 'title', 'admin_email' ), $assoc_args );
+    WP_CLI::check_required_args( array( 'url', 'title', 'admin_email' ), $assoc_args );
 
     define( 'WP_INSTALLING', true );
 }
@@ -99,31 +99,31 @@ add_filter( 'filesystem_method', function() { return 'direct'; }, 99 );
 
 // Handle --user parameter
 if ( isset( $assoc_args['user'] ) ) {
-	$user = $assoc_args['user'];
-	if ( is_numeric( $user ) ) {
-		$user_id = (int) $user;
-	} else {
-		$user_id = (int) username_exists( $user );
-	}
-	if ( !$user_id || !wp_set_current_user( $user_id ) ) {
-		WP_CLI::error( sprintf( 'Could not get a user_id for this user: %s', var_export( $user, true ) ) );
-	}
-	unset( $assoc_args['user'], $user );
+    $user = $assoc_args['user'];
+    if ( is_numeric( $user ) ) {
+        $user_id = (int) $user;
+    } else {
+        $user_id = (int) username_exists( $user );
+    }
+    if ( !$user_id || !wp_set_current_user( $user_id ) ) {
+        WP_CLI::error( sprintf( 'Could not get a user_id for this user: %s', var_export( $user, true ) ) );
+    }
+    unset( $assoc_args['user'], $user );
 }
 
 // Handle --require parameter
 if ( isset( $assoc_args['require'] ) ) {
-	require $assoc_args['require'];
-	unset( $assoc_args['require'] );
+    require $assoc_args['require'];
+    unset( $assoc_args['require'] );
 }
 
 // Generate strings for autocomplete
 if ( WP_CLI_AUTOCOMPLETE ) {
-	foreach ( WP_CLI::load_all_commands() as $name => $command ) {
-		$subcommands = implode( ' ', WP_CLI_Command::get_subcommands( $command ) );
-		WP_CLI::line( $name .  ' ' . $subcommands );
-	}
-	exit;
+    foreach ( WP_CLI::load_all_commands() as $name => $command ) {
+        $subcommands = implode( ' ', WP_CLI_Command::get_subcommands( $command ) );
+        WP_CLI::line( $name .  ' ' . $subcommands );
+    }
+    exit;
 }
 
 WP_CLI::run_command( $arguments, $assoc_args );
